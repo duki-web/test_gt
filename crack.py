@@ -1,16 +1,19 @@
+import os
 import hashlib
 import json
 import math
 import random
 import time
-
+import logging
 import httpx
+from os import path as PATH
+from crop_image import validate_path
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import padding, serialization
 from cryptography.hazmat.primitives.asymmetric.padding import PKCS1v15
-from crop_image import validate_path
-from os import path as PATH
-import os
+
+logger = logging.getLogger(__name__)
+
 class Crack:
     def __init__(self, gt=None, challenge=None):
         self.pic_path = None
@@ -39,6 +42,7 @@ Bm1Zzu+l8nSOqAurgQIDAQAB
         url = f"https://api.geetest.com/gettype.php?gt={self.gt}"
         res = self.session.get(url)
         data = json.loads(res.text[1:-1])["data"]
+        logger.debug(f"再次获得{data}")
         return data
 
     @staticmethod
@@ -358,6 +362,7 @@ Bm1Zzu+l8nSOqAurgQIDAQAB
         }
         resp = self.session.get("https://api.geetest.com/get.php", params=params).text
         data = json.loads(resp[22:-1])["data"]
+        logger.debug(f"获取cs结果{data}")
         self.c = data["c"]
         self.s = data["s"]
         return data["c"], data["s"]
@@ -398,9 +403,79 @@ Bm1Zzu+l8nSOqAurgQIDAQAB
         ]
         tt = transform(self.encode_mouse_path(mouse_path, self.c, self.s), self.c, self.s)
         rp = self.MD5(self.gt + self.challenge + self.s)
-        temp1 = '''"lang":"zh-cn","type":"fullpage","tt":"%s","light":"DIV_0","s":"c7c3e21112fe4f741921cb3e4ff9f7cb","h":"321f9af1e098233dbd03f250fd2b5e21","hh":"39bd9cad9e425c3a8f51610fd506e3b3","hi":"09eb21b3ae9542a9bc1e8b63b3d9a467","vip_order":-1,"ct":-1,"ep":{"v":"9.1.9-dbjg5z","te":false,"me":true,"ven":"Google Inc. (Intel)","ren":"ANGLE (Intel, Intel(R) Iris(R) Xe Graphics (0x0000A7A0) Direct3D11 vs_5_0 ps_5_0, D3D11)","fp":["scroll",0,1602,1724571628498,null],"lp":["up",386,217,1724571629854,"pointerup"],"em":{"ph":0,"cp":0,"ek":"11","wd":1,"nt":0,"si":0,"sc":0},"tm":{"a":1724571567311,"b":1724571567549,"c":1724571567562,"d":0,"e":0,"f":1724571567312,"g":1724571567312,"h":1724571567312,"i":1724571567317,"j":1724571567423,"k":1724571567330,"l":1724571567423,"m":1724571567545,"n":1724571567547,"o":1724571567569,"p":1724571568259,"q":1724571568259,"r":1724571568261,"s":1724571570378,"t":1724571570378,"u":1724571570380},"dnf":"dnf","by":0},"passtime":1600,"rp":"%s",''' % (
-            tt, rp)
-        r = "{" + temp1 + '"captcha_token":"1198034057","du6o":"eyjf7nne"}'
+        payload_dict = {
+            "lang": "zh-cn",
+            "type": "fullpage",
+            "tt": tt,  # 使用变量
+            "light": "DIV_0",
+            "s": "c7c3e21112fe4f741921cb3e4ff9f7cb",
+            "h": "321f9af1e098233dbd03f250fd2b5e21",
+            "hh": "39bd9cad9e425c3a8f51610fd506e3b3",
+            "hi": "09eb21b3ae9542a9bc1e8b63b3d9a467",
+            "vip_order": -1,
+            "ct": -1,
+            "ep": {
+                "v": "9.2.0-guwyxh",
+                "te": False,  # JSON 'false' 对应 Python 'False'
+                "me": True,   # JSON 'true' 对应 Python 'True'
+                "ven": "Google Inc. (Intel)",
+                "ren": "ANGLE (Intel, Intel(R) Iris(R) Xe Graphics (0x0000A7A0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+                "fp": [
+                    "scroll",
+                    0,
+                    1602,
+                    1724571628498,
+                    None  # JSON 'null' 对应 Python 'None'
+                ],
+                "lp": [
+                    "up",
+                    386,
+                    217,
+                    1724571629854,
+                    "pointerup"
+                ],
+                "em": {
+                    "ph": 0,
+                    "cp": 0,
+                    "ek": "11",
+                    "wd": 1,
+                    "nt": 0,
+                    "si": 0,
+                    "sc": 0
+                },
+                "tm": {
+                    "a": 1724571567311,
+                    "b": 1724571567549,
+                    "c": 1724571567562,
+                    "d": 0,
+                    "e": 0,
+                    "f": 1724571567312,
+                    "g": 1724571567312,
+                    "h": 1724571567312,
+                    "i": 1724571567317,
+                    "j": 1724571567423,
+                    "k": 1724571567330,
+                    "l": 1724571567423,
+                    "m": 1724571567545,
+                    "n": 1724571567547,
+                    "o": 1724571567569,
+                    "p": 1724571568259,
+                    "q": 1724571568259,
+                    "r": 1724571568261,
+                    "s": 1724571570378,
+                    "t": 1724571570378,
+                    "u": 1724571570380
+                },
+                "dnf": "dnf",
+                "by": 0
+            },
+            "passtime": 1600,
+            "rp": rp,  # 使用变量
+            "captcha_token":"2064329542",
+            "tsfq":"xovrayel"
+        }
+        # r = "{" + temp1 + '"captcha_token":"1198034057","du6o":"eyjf7nne"}'
+        r = json.dumps(payload_dict, separators=(',', ':'))
         ct = self.aes_encrypt(r)
         s = [byte for byte in ct]
         w = self.encode(s)
@@ -414,6 +489,7 @@ Bm1Zzu+l8nSOqAurgQIDAQAB
             "w": w
         }
         resp = self.session.get("https://api.geetest.com/ajax.php", params=params).text
+        logger.debug(f"ajax结果:{resp}")
         return json.loads(resp[22:-1])["data"]
 
     def get_pic(self):
@@ -435,11 +511,15 @@ Bm1Zzu+l8nSOqAurgQIDAQAB
         }
         resp = self.session.get("https://api.geevisit.com/get.php", params=params).text
         data = json.loads(resp[22:-1])["data"]
+        logger.debug(f"获取图片结果{data}")
         self.pic_path = data["pic"]
         pic_url = "https://" + data["resource_servers"][0][:-1] + data["pic"]
+
         pic_data = self.session.get(pic_url).content
         pic_name = data["pic"].split("/")[-1]
         pic_type = data["pic_type"]
+        if "80/2023-12-04T12/icon" in pic_url:
+            pic_type = "icon1"        
         with open(PATH.join(validate_path,pic_name),'wb+') as f:
             f.write(pic_data)
         return pic_data,pic_name,pic_type
