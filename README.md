@@ -16,9 +16,9 @@ resnet模型及V4数据集：https://github.com/taisuii/ClassificationCaptchaOcr
 
 另一个点选的检测模型https://github.com/ultralytics/ultralytics
 
-api：https://github.com/ravizhan/geetest-v3-click-crack (此项目近期未更新，当前9.2.0-guwyxh参数修改```"captcha_token":"2064329542", "tsfq":"xovrayel")```
+api：https://github.com/ravizhan/geetest-v3-click-crack (此项目近期未更新，当前9.2.0-guwyxh参数修改```"captcha_token":"2064329542", "tsfq":"xovrayel"```)
 
-感谢@kissnavel 提供的关于我没玩的那两款的api
+感谢 @kissnavel 提供的关于我没玩的那两款的api
 
 ## 运行步骤
 
@@ -105,6 +105,7 @@ pip install -r requirements_without_train.txt
 ### 5-b.使用docker启动服务 
 
 镜像地址为<span id="docker">luguoyixiazi/test_nine:25.7.2</span> 此版本特供只需要九宫格和便笺的
+
 镜像地址为<span id="docker">luguoyixiazi/test_nine:25.11.2</span> 此版本在上述基础上支持🛤和3z
 
 运行时只需指定绑定的port和两个环境变量`use_pdl`和`use_dfine`和`use_multi`，1为启用模型，0为不启用，默认均启用，api端口为/pass_uni，必填参数gt、challenge，单独的pass_nine和pass_icon也写了，有更多可选参数
@@ -135,4 +136,5 @@ def game_captcha(gt: str, challenge: str):
 #### --宣传--
 
 欢迎大家支持我的其他项目(搭配使用)喵~~~~~~~~
+
 
