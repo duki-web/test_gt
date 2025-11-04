@@ -16,7 +16,7 @@ resnet模型及V4数据集：https://github.com/taisuii/ClassificationCaptchaOcr
 
 另一个点选的检测模型https://github.com/ultralytics/ultralytics
 
-api：https://github.com/ravizhan/geetest-v3-click-crack (此项目近期未更新，当前9.2.0-guwyxh参数修改```"captcha_token":"2064329542", "tsfq":"xovrayel"```)
+api：https://github.com/ravizhan/geetest-v3-click-crack
 
 感谢 @kissnavel 提供的关于我没玩的那两款的api
 
@@ -136,5 +136,6 @@ def game_captcha(gt: str, challenge: str):
 #### --宣传--
 
 欢迎大家支持我的其他项目(搭配使用)喵~~~~~~~~
+
 
 
